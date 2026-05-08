@@ -1,8 +1,8 @@
-# Open Source Checklist
+# 开源发布检查
 
-This project can be published as a generic, local, authorized practice-question archiving tool. The public repository must not include real course data, account state, or collected question banks.
+这个仓库可以作为一个通用的、仅供本地使用的练习题自动化工具来发布。公开仓库里不要放真实课程数据、账号状态或已收集的题库。
 
-## Keep In The Repository
+## 保留内容
 
 - `src/`
 - `scripts/`
@@ -11,20 +11,20 @@ This project can be published as a generic, local, authorized practice-question 
 - `package.json`
 - `package-lock.json`
 - `.gitignore`
-- `secrets/yuketang-cookies.example.json` with placeholder values only
+- `secrets/yuketang-cookies.example.json`（只保留占位符）
 
-## Keep Out Of The Repository
+## 不要放入仓库
 
 - `data/`
 - `.playwright-profile/`
 - `docx_render/`
-- real cookie files
+- 真实 cookie 文件
 - `.env`
-- API keys
-- generated `.docx`, `.csv`, `.xlsx`, `.pdf`, and `.png` files
-- real course URLs, classroom IDs, user IDs, exam IDs, leaf IDs, screenshots, raw JSON responses, and question-bank content
+- API key
+- 生成的 `.docx`、`.csv`、`.xlsx`、`.pdf`、`.png`
+- 真实课程 URL、课堂 ID、用户 ID、考试 ID、叶节点 ID、截图、原始 JSON 响应、题库内容
 
-## Required `.gitignore`
+## `.gitignore`
 
 ```text
 node_modules/
@@ -42,9 +42,7 @@ docx_render/
 *.png
 ```
 
-## Sensitive-Content Scan
-
-Run a scan before every public push:
+## 发布前检查
 
 ```powershell
 $patterns = @(
@@ -61,34 +59,29 @@ $patterns = @(
 )
 
 Select-String -Path README.md,docs\*.md,src\*.js,scripts\*.py,package.json,secrets\*.json -Pattern $patterns
-```
-
-Also check the Git staging area:
-
-```powershell
 git status --short
 git diff --cached --stat
 git diff --cached
 ```
 
-If you have already committed private information, deleting it in a later commit is not enough. Rewrite the public history before pushing, or create a new clean repository.
+如果已经把私密信息提交进历史，单纯追加一个“删除”提交不够，要重写公开历史，或者重新建一个干净仓库。
 
-## Public Positioning
+## 对外表述
 
-Recommended framing:
+建议写法：
 
-- authorized practice-question archiving;
-- local review-bank generation;
-- optional AI answer suggestions for human review;
-- privacy-first local outputs.
+- 本地练习题收集与复习整理；
+- 仅限本人账号、非计分练习；
+- 可选的 AI 辅助答题建议；
+- 本地优先，隐私优先。
 
-Avoid framing such as:
+不要写成：
 
-- bypassing a platform;
-- cracking or attacking Rain Classroom;
-- auto-solving graded work;
-- distributing course question banks.
+- 旁路平台；
+- 破解或攻击雨课堂；
+- 自动做计分作业；
+- 分发课程题库。
 
-## Cookie Handling
+## cookie 说明
 
-The example cookie file is only a schema placeholder. Real cookies are login state. They must remain local and should be rotated if accidentally exposed.
+示例 cookie 文件只是结构占位符。真实 cookie 属于登录态，必须留在本地；如果曾经泄露，应及时更换。

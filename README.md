@@ -1,97 +1,96 @@
-# Rain Classroom Practice Automation
+# 雨课堂练习自动化
 
-Local automation for authorized Rain Classroom / Yuketang practice quizzes. It uses Playwright to open a quiz page, collect randomized practice questions, build a local question bank, optionally fill known answers, and export review files.
+这是一个用于**本人账号、非计分练习**的雨课堂 / 学堂在线练习题自动化工具。它可以打开练习页面、收集随机题目、建立本地题库、自动填充已知答案，并导出复习文档。
 
-Use this only with your own account, on practice activities where repeated attempts are allowed and the activity is not graded. Do not use it for exams, graded assignments, other people's accounts, or any workflow that violates platform or course rules.
+只用于你自己的账号、允许反复练习的活动。不要用于考试、计分作业、他人账号，或任何违反平台 / 课程规则的场景。
 
-## Features
+## 功能
 
-- Opens a Rain Classroom practice quiz from a user-provided URL.
-- Collects questions from page text, HTML, screenshots, and JSON responses.
-- Deduplicates questions by normalized stem and options.
-- Stores local JSON / CSV question-bank outputs under `data/`.
-- Optionally fills known answers from the local bank.
-- Optionally asks an OpenAI model for unknown-question suggestions.
-- Exports a formatted DOCX review document from a local question bank.
+- 打开用户提供的练习 URL。
+- 从页面文本、HTML、截图和 JSON 响应中收集题目。
+- 按题干和选项去重，形成本地题库。
+- 可按本地题库自动填充已知答案。
+- 可调用 OpenAI 做未知题目的辅助建议。
+- 可把本地题库导出为排版好的 Word 复习文档。
 
-## Install
+## 安装
 
 ```powershell
 npm.cmd install
 npx.cmd playwright install chromium
 ```
 
-The DOCX exporter also needs `python-docx`:
+导出 Word 还需要：
 
 ```powershell
 python -m pip install python-docx
 ```
 
-## Basic Usage
+## 基本用法
 
-First run with a visible browser so you can sign in manually:
+先用可见浏览器跑一次，手动登录：
 
 ```powershell
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --unknown-policy skip --max-attempts 1
 ```
 
-After confirming the activity is an authorized non-graded practice and repeated submissions are allowed, you can run repeated collection:
+确认是允许重复作答的练习后，可反复收集：
 
 ```powershell
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --loop --stable 3 --auto-fill --auto-submit --unknown-policy random
 ```
 
-Useful options:
+常用参数：
 
-- `--loop`: repeat attempts.
-- `--stable <n>`: stop after `n` consecutive attempts with no newly discovered questions.
-- `--max-attempts <n>`: safety cap for repeated runs.
-- `--auto-fill`: fill answers that are already known in the local bank.
-- `--auto-submit`: submit attempts automatically. Use only for authorized non-graded practice.
-- `--unknown-policy skip|first|random`: how to handle unknown questions when AI is disabled or no AI answer is usable.
-- `--browser-channel msedge|chrome`: use an installed browser channel instead of bundled Chromium.
-- `--headed false`: run headless after login is already working.
-- `--cookies <file>`: load cookies from a local JSON file. Never commit real cookies.
+- `--loop`：循环尝试。
+- `--stable <n>`：连续 `n` 次没有新题后停止。
+- `--max-attempts <n>`：最大尝试次数。
+- `--auto-fill`：填入本地题库里已知答案。
+- `--auto-submit`：自动交卷，仅限允许重复作答的练习。
+- `--unknown-policy skip|first|random`：未知题处理策略。
+- `--browser-channel msedge|chrome`：使用已安装浏览器。
+- `--headed false`：登录稳定后可改为无头模式。
+- `--cookies <file>`：加载本地 cookies 文件，真实 cookies 不要提交到仓库。
 
-## AI Suggestions
+## AI 辅助
 
-AI is disabled by default. It only runs when a question is not answered by the local bank. Suggestions are logged to `data/ai-suggestions.jsonl`.
+AI 默认关闭，只在题库里没有答案时才会用。建议写入 `data/ai-suggestions.jsonl`。
 
-Set an OpenAI API key in your local shell:
+设置 API Key：
 
 ```powershell
 $env:OPENAI_API_KEY="<your-api-key>"
 ```
 
-Record suggestions only:
+只记录建议：
 
 ```powershell
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-suggest --unknown-policy skip
 ```
 
-Fill only when the model reports enough confidence:
+高置信度才填：
 
 ```powershell
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-fill --ai-min-confidence 0.85 --unknown-policy skip
 ```
 
-Force-fill unknown questions with AI suggestions:
+强制用 AI 填：
 
 ```powershell
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-force-fill --unknown-policy skip
 ```
 
-`--ai-force-fill` can be wrong. The script records the source as `ai-force`; it does not turn AI guesses into standard answers. Standard answers should come only from a known local bank or from post-submit result data.
+`--ai-force-fill` 可能会错。AI 结果只算辅助建议，不应当作标准答案来源。
 
-## Fast Runner
+## 快速模式
 
-The fast runner is for cases where you already know the real exam-room ID used by the answer page. It goes directly through the exam-room routes and is less portable than the normal URL runner.
+如果你已经知道答案页的 `exam_id`，可以直接走快模式：
 
 ```powershell
 npm.cmd run fast -- --exam-id "<exam_id>" --attempts 50 --stable 3 --time-budget-sec 900
 ```
 
-AI modes are also supported:
+也支持 AI：
 
 ```powershell
 npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-suggest
@@ -99,42 +98,35 @@ npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-fill --a
 npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-force-fill
 ```
 
-Do not commit real exam IDs or raw run output.
+不要把真实 `exam_id` 或原始运行输出提交到仓库。
 
-## Outputs
+## 输出
 
-- `data/question-bank.json`: main local question bank.
-- `data/question-bank.csv`: UTF-8 BOM CSV export for spreadsheet apps.
-- `data/attempts.jsonl`: normal runner attempt summaries.
-- `data/fast-attempts.jsonl`: fast runner attempt summaries.
-- `data/ai-suggestions.jsonl`: AI suggestions for unknown questions.
-- `data/raw/attempt-*` and `data/raw/fast2-*`: raw text, HTML, screenshots, and JSON responses for debugging.
-- `question_bank_review.docx`: formatted DOCX review document generated from a local bank.
+- `data/question-bank.json`：本地题库主文件。
+- `data/question-bank.csv`：给表格软件用的 CSV。
+- `data/attempts.jsonl`：普通模式尝试记录。
+- `data/fast-attempts.jsonl`：快模式尝试记录。
+- `data/ai-suggestions.jsonl`：AI 建议记录。
+- `data/raw/attempt-*` 和 `data/raw/fast2-*`：调试用原始文本、HTML、截图和 JSON。
+- `question_bank_review.docx`：本地题库导出的 Word 复习文档。
 
-`data/`, `secrets/`, `.playwright-profile/`, rendered files, spreadsheets, and DOCX outputs are ignored by default.
+这些本地输出默认都不进 GitHub。
 
-## Generate A DOCX Review File
+## 生成 Word 复习文档
 
 ```powershell
 python scripts\create_question_bank_docx.py
 ```
 
-Custom output:
+自定义输出：
 
 ```powershell
 python scripts\create_question_bank_docx.py --out "question_bank_review.docx" --title "Practice Question Bank Review"
 ```
 
-The exporter sets an East Asian font for Chinese text and includes a small mojibake repair fallback for text that was accidentally decoded with the wrong encoding.
+## 公开仓库建议
 
-## Privacy And Publishing
+- 仓库只保留通用代码、文档和示例配置。
+- 不保留真实 cookies、题库、截图、原始响应、账号状态、真实 URL 和各类 ID。
+- 发布前先检查工作区和 Git 历史。
 
-Before publishing or sharing a repository, verify that it does not contain:
-
-- real cookies, session IDs, CSRF tokens, or API keys;
-- `.playwright-profile/` browser state;
-- `data/` run output, raw JSON, screenshots, or question banks;
-- real course URLs, classroom IDs, user IDs, exam IDs, or leaf IDs;
-- generated DOCX / CSV / XLSX review files.
-
-See [docs/WORKFLOW.md](docs/WORKFLOW.md) for the workflow and [docs/OPEN_SOURCE.md](docs/OPEN_SOURCE.md) for the publishing checklist.
