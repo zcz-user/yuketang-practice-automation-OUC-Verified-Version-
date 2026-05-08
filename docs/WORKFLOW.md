@@ -1,17 +1,15 @@
 # 使用流程
 
-这个文档说明一个通用的、仅限本人账号的非计分练习流程，不包含真实课程链接、ID、题目或账号状态。
+这个文档说明一个通用的练习题收集与复习整理流程。
 
-## 1. 使用边界
+## 1. 使用场景
 
-只在这些条件都满足时使用：
+适合这些场景：
 
 - 你在自己的账号上操作。
-- 目标是练习，不是计分考试或作业。
+- 目标是练习题复习。
 - 允许重复作答。
-- 允许本地整理自己的练习材料。
-
-不要公开分享原始运行输出、题库、截图、cookie、登录状态、真实 URL 或各类 ID。
+- 需要把练习材料整理成本地题库。
 
 ## 2. 项目结构
 
@@ -54,8 +52,6 @@ python -m pip install python-docx
 npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --cookies "secrets/yuketang-cookies.json"
 ```
 
-真实 cookie 不要提交到仓库。
-
 ## 5. 普通模式
 
 先做一次不提交的烟雾测试：
@@ -89,8 +85,6 @@ npm.cmd run fast -- --exam-id "<exam_id>" --attempts 50 --stable 3 --time-budget
 ```
 
 它会把每轮的试卷、答题决策、提交、结果和答案页数据写到 `data/raw/fast2-*`。
-
-不要把真实 ID 写进示例、文档、提交记录或截图里。
 
 ## 7. AI 层
 
@@ -163,8 +157,6 @@ python scripts\create_question_bank_docx.py
 ```powershell
 python scripts\create_question_bank_docx.py --bank "data/question-bank.json" --out "question_bank_review.docx" --title "Practice Question Bank Review"
 ```
-
-生成文件属于本地输出，不要提交。
 
 ## 11. 排错
 

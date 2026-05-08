@@ -1,8 +1,8 @@
 # 雨课堂练习自动化
 
-这是一个用于**本人账号、非计分练习**的雨课堂 / 学堂在线练习题自动化工具。它可以打开练习页面、收集随机题目、建立本地题库、自动填充已知答案，并导出复习文档。
+由 ZCZ-User 维护的雨课堂 / 学堂在线练习题自动化工具。它可以打开练习页面、收集随机题目、建立本地题库、自动填充已知答案，并导出复习文档。
 
-只用于你自己的账号、允许反复练习的活动。不要用于考试、计分作业、他人账号，或任何违反平台 / 课程规则的场景。
+适用于本人账号下可重复作答的练习活动。
 
 ## 功能
 
@@ -50,7 +50,7 @@ npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --loop --st
 - `--unknown-policy skip|first|random`：未知题处理策略。
 - `--browser-channel msedge|chrome`：使用已安装浏览器。
 - `--headed false`：登录稳定后可改为无头模式。
-- `--cookies <file>`：加载本地 cookies 文件，真实 cookies 不要提交到仓库。
+- `--cookies <file>`：加载本地 cookies 文件。
 
 ## AI 辅助
 
@@ -98,8 +98,6 @@ npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-fill --a
 npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-force-fill
 ```
 
-不要把真实 `exam_id` 或原始运行输出提交到仓库。
-
 ## 输出
 
 - `data/question-bank.json`：本地题库主文件。
@@ -109,8 +107,6 @@ npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-force-fi
 - `data/ai-suggestions.jsonl`：AI 建议记录。
 - `data/raw/attempt-*` 和 `data/raw/fast2-*`：调试用原始文本、HTML、截图和 JSON。
 - `question_bank_review.docx`：本地题库导出的 Word 复习文档。
-
-这些本地输出默认都不进 GitHub。
 
 ## 生成 Word 复习文档
 
@@ -123,10 +119,3 @@ python scripts\create_question_bank_docx.py
 ```powershell
 python scripts\create_question_bank_docx.py --out "question_bank_review.docx" --title "Practice Question Bank Review"
 ```
-
-## 公开仓库建议
-
-- 仓库只保留通用代码、文档和示例配置。
-- 不保留真实 cookies、题库、截图、原始响应、账号状态、真实 URL 和各类 ID。
-- 发布前先检查工作区和 Git 历史。
-
