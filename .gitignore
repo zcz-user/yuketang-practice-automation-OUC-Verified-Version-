@@ -1,0 +1,16 @@
+node_modules/
+data/
+secrets/*
+!secrets/yuketang-cookies.example.json
+.playwright-profile/
+docx_render/
+.pycache__/
+__pycache__/
+.pytest_cache/
+.env
+*.log
+*.docx
+*.xlsx
+*.csv
+*.pdf
+*.png

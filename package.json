@@ -1,0 +1,15 @@
+{
+  "name": "yuketang-practice-automation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Rain Classroom practice quiz collector and answer assistant.",
+  "type": "commonjs",
+  "scripts": {
+    "ykt": "node src/yuketang-runner.js",
+    "fast": "node src/yuketang-fast-runner.js",
+    "check": "node --check src/yuketang-runner.js && node --check src/yuketang-fast-runner.js && node --check src/ai-inference.js"
+  },
+  "dependencies": {
+    "playwright": "^1.44.0"
+  }
+}
