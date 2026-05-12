@@ -1,121 +1,172 @@
-# 雨课堂练习自动化
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-success?style=flat-square" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Node-18%2B-339933?style=flat-square&logo=node.js" />
+  <img src="https://img.shields.io/badge/Playwright-Enabled-45ba4b?style=flat-square&logo=playwright" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=flat-square" />
+</p>
 
-由 ZCZ-User 维护的雨课堂 / 学堂在线练习题自动化工具。它可以打开练习页面、收集随机题目、建立本地题库、自动填充已知答案，并导出复习文档。
+<h1 align="center">
+  🎓 雨课堂练习自动化
+</h1>
+<h3 align="center">
+  Yuketang Practice Automation — OUC Verified Version
+</h3>
+<p align="center">
+  <em>收集随机题目 · 建立本地题库 · 自动填充 · 导出复习文档</em>
+</p>
 
-适用于本人账号下可重复作答的练习活动。
+<p align="center">
+  <a href="#-功能">功能</a> •
+  <a href="#-安装">安装</a> •
+  <a href="#-基本用法">基本用法</a> •
+  <a href="#-AI-辅助">AI 辅助</a> •
+  <a href="#-参数说明">参数说明</a> •
+  <a href="#-项目结构">项目结构</a>
+</p>
 
-## 功能
+---
 
-- 打开用户提供的练习 URL。
-- 从页面文本、HTML、截图和 JSON 响应中收集题目。
-- 按题干和选项去重，形成本地题库。
-- 可按本地题库自动填充已知答案。
-- 可调用 OpenAI 做未知题目的辅助建议。
-- 可把本地题库导出为排版好的 Word 复习文档。
+## 📖 简介
 
-## 安装
+由 ZCZ-User 维护的 **雨课堂 / 学堂在线** 练习题自动化工具。它可以：
+
+1. 打开练习页面，收集随机题目
+2. 建立本地题库（按题干和选项去重）
+3. 自动填充已知答案
+4. 记录 AI 辅助建议
+5. 导出排版精美的 Word / CSV 复习文档
+
+> **适用场景：** 本人账号下可重复作答的练习活动。
+> ✅ 纯本地运行 · ✅ 无数据外泄 · ✅ 支持 AI 辅助
+
+---
+
+## ✨ 功能
+
+| 功能 | 说明 |
+|------|------|
+| 🔍 **题目收集** | 自动从页面文本、HTML、截图、JSON 响应中收集题目 |
+| 🗂️ **本地题库** | 按题干+选项去重，持久化存储 |
+| ✏️ **自动填充** | 从本地题库匹配并填入已知答案 |
+| 🤖 **AI 辅助** | 未知题目调用 AI 获取建议（可选） |
+| 📄 **导出复习文档** | 导出为 Word (.docx) 或 CSV 格式 |
+| 🔄 **循环模式** | 自动循环尝试，直到没有新题 |
+| 💾 **Cookies 管理** | 支持加载/保存登录状态 |
+
+---
+
+## 🚀 快速开始
+
+### 安装
 
 ```powershell
-npm.cmd install
-npx.cmd playwright install chromium
-```
+# 安装 Node 依赖
+npm install
 
-导出 Word 还需要：
+# 安装 Playwright 浏览器
+npx playwright install chromium
 
-```powershell
+# 导出 Word 还需 Python 依赖
 python -m pip install python-docx
 ```
 
-## 基本用法
-
-先用可见浏览器跑一次，手动登录：
+### 首次使用：手动登录
 
 ```powershell
-npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --unknown-policy skip --max-attempts 1
+npm run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --unknown-policy skip --max-attempts 1
 ```
 
-确认是允许重复作答的练习后，可反复收集：
+首次运行会在可见浏览器中打开页面，请手动扫码/账号登录。登录成功后 Cookie 会自动保存。
+
+### 循环收集模式
+
+确认是允许重复作答的练习后：
 
 ```powershell
-npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --loop --stable 3 --auto-fill --auto-submit --unknown-policy random
+npm run ykt -- --url "https://example.com/path/to/practice/quiz" --loop --stable 3 --auto-fill --auto-submit --unknown-policy random
 ```
 
-常用参数：
-
-- `--loop`：循环尝试。
-- `--stable <n>`：连续 `n` 次没有新题后停止。
-- `--max-attempts <n>`：最大尝试次数。
-- `--auto-fill`：填入本地题库里已知答案。
-- `--auto-submit`：自动交卷，仅限允许重复作答的练习。
-- `--unknown-policy skip|first|random`：未知题处理策略。
-- `--browser-channel msedge|chrome`：使用已安装浏览器。
-- `--headed false`：登录稳定后可改为无头模式。
-- `--cookies <file>`：加载本地 cookies 文件。
-
-## AI 辅助
-
-AI 默认关闭，只在题库里没有答案时才会用。建议写入 `data/ai-suggestions.jsonl`。
-
-设置 API Key：
+### 导出复习文档
 
 ```powershell
+python scripts/create_question_bank_docx.py
+```
+
+---
+
+## ⚙️ 参数说明
+
+| 参数 | 说明 |
+|------|------|
+| `--url` | 练习页面 URL（必填） |
+| `--loop` | 循环尝试模式 |
+| `--stable <n>` | 连续 `n` 次没有新题后停止 |
+| `--max-attempts <n>` | 最大尝试次数 |
+| `--auto-fill` | 从本地题库自动填充 |
+| `--auto-submit` | 自动交卷（仅限可重复作答的练习） |
+| `--unknown-policy` | 未知题策略：`skip`（跳过）/ `first`（选第一个）/ `random`（随机选） |
+| `--browser-channel` | 使用已安装浏览器：`msedge` / `chrome` |
+| `--headed` | 有头模式（`true`）/ 无头模式（`false`） |
+| `--cookies` | 加载本地 cookies 文件路径 |
+
+---
+
+## 🤖 AI 辅助
+
+AI 默认关闭，只在本地题库没有答案时才会使用。
+
+### 配置
+
+```powershell
+# 设置 OpenAI API Key
 $env:OPENAI_API_KEY="<your-api-key>"
 ```
 
-只记录建议：
+### 仅记录建议（不自动填写）
 
 ```powershell
-npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-suggest --unknown-policy skip
+npm run ykt -- --url "https://..." --auto-fill --ai-suggest --unknown-policy skip
 ```
 
-高置信度才填：
+### 高置信度才填写
 
 ```powershell
-npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-fill --ai-min-confidence 0.85 --unknown-policy skip
+npm run ykt -- --url "https://..." --auto-fill --ai-fill --ai-min-confidence 0.85 --unknown-policy skip
 ```
 
-强制用 AI 填：
+AI 建议会记录到 `data/ai-suggestions.jsonl`，方便人工审核。
 
-```powershell
-npm.cmd run ykt -- --url "https://example.com/path/to/practice/quiz" --auto-fill --ai-force-fill --unknown-policy skip
+---
+
+## 📁 项目结构
+
+```
+├── src/
+│   ├── yuketang-runner.js        # 主运行逻辑
+│   ├── yuketang-fast-runner.js   # 快速运行模式
+│   └── ai-inference.js           # AI 推断模块
+├── scripts/
+│   └── create_question_bank_docx.py  # Word 导出脚本
+├── docs/
+│   └── WORKFLOW.md               # 工作流程文档
+├── secrets/
+│   └── yuketang-cookies.example.json  # Cookie 配置示例
+├── package.json
+├── .gitignore
+└── README.md
 ```
 
-`--ai-force-fill` 可能会错。AI 结果只算辅助建议，不应当作标准答案来源。
+---
 
-## 快速模式
+## 🔒 安全说明
 
-如果你已经知道答案页的 `exam_id`，可以直接走快模式：
+- 所有数据仅保存在本地，不上传任何服务器
+- API Key 仅通过环境变量传入，不会落盘
+- Cookie 文件请妥善保管，避免泄露
 
-```powershell
-npm.cmd run fast -- --exam-id "<exam_id>" --attempts 50 --stable 3 --time-budget-sec 900
-```
+---
 
-也支持 AI：
+## 📄 License
 
-```powershell
-npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-suggest
-npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-fill --ai-min-confidence 0.85
-npm.cmd run fast -- --exam-id "<exam_id>" --attempts 10 --stable 3 --ai-force-fill
-```
-
-## 输出
-
-- `data/question-bank.json`：本地题库主文件。
-- `data/question-bank.csv`：给表格软件用的 CSV。
-- `data/attempts.jsonl`：普通模式尝试记录。
-- `data/fast-attempts.jsonl`：快模式尝试记录。
-- `data/ai-suggestions.jsonl`：AI 建议记录。
-- `data/raw/attempt-*` 和 `data/raw/fast2-*`：调试用原始文本、HTML、截图和 JSON。
-- `question_bank_review.docx`：本地题库导出的 Word 复习文档。
-
-## 生成 Word 复习文档
-
-```powershell
-python scripts\create_question_bank_docx.py
-```
-
-自定义输出：
-
-```powershell
-python scripts\create_question_bank_docx.py --out "question_bank_review.docx" --title "Practice Question Bank Review"
-```
+MIT © [zcz-user](https://github.com/zcz-user)
